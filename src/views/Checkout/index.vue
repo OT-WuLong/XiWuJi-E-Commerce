@@ -275,7 +275,7 @@ onMounted(() => getCheckInfo())
     }
 
     >a {
-      color: $xtxColor;
+      color: $brandPrimary;
       width: 160px;
       text-align: center;
       height: 90px;
@@ -361,7 +361,7 @@ onMounted(() => getCheckInfo())
   display: inline-block;
 
   &.active {
-    border-color: $xtxColor;
+    border-color: $brandPrimary;
   }
 }
 
@@ -419,14 +419,14 @@ onMounted(() => getCheckInfo())
     text-align: left;
 
     &:focus-visible {
-      outline: 2px solid $xtxColor;
+      outline: 2px solid $brandPrimary;
       outline-offset: 2px;
     }
 
     &.active,
     &:hover {
-      border-color: $xtxColor;
-      background: color.adjust($xtxColor, $lightness: 50%);
+      border-color: $brandPrimary;
+      background: color.adjust($brandPrimary, $lightness: 50%);
     }
 
     .address-lines {

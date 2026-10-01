@@ -77,7 +77,7 @@ watch(() => route.params.id, getHotList, { immediate: true })
 
   h3 {
     height: 70px;
-    background: $helpColor;
+    background: $brandAccent;
     color: #fff;
     font-size: 18px;
     line-height: 70px;

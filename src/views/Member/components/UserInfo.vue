@@ -50,7 +50,9 @@ onMounted(() => getLikeList())
 <style scoped lang="scss">
 .home-overview {
   height: 132px;
-  background: url(@/assets/images/center-bg.webp) no-repeat center / cover;
+  background:
+    radial-gradient(circle at 82% 48%, rgba(255, 255, 255, 0.12) 0 12%, transparent 12.5%),
+    linear-gradient(110deg, $navDark, $brandPrimary);
   display: flex;
 
   .user-meta {

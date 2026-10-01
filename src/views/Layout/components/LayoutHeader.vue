@@ -1,6 +1,7 @@
 <script setup>
 import { useCategoryStore } from '@/stores/categoryStore.js';
 import HeaderCart from './HeaderCart.vue';
+import BrandLogo from '@/components/BrandLogo.vue';
 const categoryStore = useCategoryStore();
 
 
@@ -10,7 +11,7 @@ const categoryStore = useCategoryStore();
   <header class='app-header'>
     <div class="container">
       <h1 class="logo">
-        <RouterLink to="/">小兔鲜</RouterLink>
+        <BrandLogo />
       </h1>
       <ul class="app-header-nav">
         <li class="home" v-for="item in categoryStore.catagoryList" :key="item.id">
@@ -39,14 +40,6 @@ const categoryStore = useCategoryStore();
 
   .logo {
     width: 200px;
-
-    a {
-      display: block;
-      height: 132px;
-      width: 100%;
-      text-indent: -9999px;
-      background: url('@/assets/images/logo.webp') no-repeat center 18px / contain;
-    }
   }
 
   .app-header-nav {
@@ -68,14 +61,14 @@ const categoryStore = useCategoryStore();
         display: inline-block;
 
         &:hover {
-          color: $xtxColor;
-          border-bottom: 1px solid $xtxColor;
+          color: $brandPrimary;
+          border-bottom: 1px solid $brandPrimary;
         }
       }
 
       .active {
-        color: $xtxColor;
-        border-bottom: 1px solid $xtxColor;
+        color: $brandPrimary;
+        border-bottom: 1px solid $brandPrimary;
       }
     }
   }
@@ -125,7 +118,7 @@ const categoryStore = useCategoryStore();
         top: 0;
         padding: 1px 6px;
         line-height: 1;
-        background: $helpColor;
+        background: $brandAccent;
         color: #fff;
         font-size: 12px;
         border-radius: 10px;

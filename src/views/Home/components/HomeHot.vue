@@ -47,7 +47,7 @@ onMounted(() => { getHot() })
     width: 306px;
     height: 406px;
 
-    background: #f0f9f4;
+    background: $brandTint;
     img {
       width: 306px;
       height: 306px;

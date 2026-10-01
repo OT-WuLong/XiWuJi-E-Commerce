@@ -75,7 +75,7 @@ const resultText = computed(() => {
   }
 
   .green {
-    color: #1dc779;
+    color: $successColor;
   }
 
   .red {

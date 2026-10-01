@@ -114,7 +114,7 @@ watch([elementX, elementY], () => {
 
       &:hover,
       &.active {
-        border: 2px solid $xtxColor;
+        border: 2px solid $brandPrimary;
       }
 
       button {
@@ -126,7 +126,7 @@ watch([elementX, elementY], () => {
         cursor: pointer;
 
         &:focus-visible {
-          outline: 2px solid $xtxColor;
+          outline: 2px solid $brandPrimary;
           outline-offset: 2px;
         }
 

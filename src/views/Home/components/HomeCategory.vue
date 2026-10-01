@@ -44,7 +44,7 @@ const categoryStore = useCategoryStore()
 .home-category {
   width: 250px;
   height: 500px;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba($navDark, 0.94);
   position: relative;
   z-index: 99;
 
@@ -65,7 +65,7 @@ const categoryStore = useCategoryStore()
       line-height: 55px;
 
       &:hover {
-        background: $xtxColor;
+        background: $brandPrimary;
       }
 
       a {
@@ -80,7 +80,7 @@ const categoryStore = useCategoryStore()
       .layer {
         width: 990px;
         height: 500px;
-        background: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.96);
         position: absolute;
         left: 250px;
         top: 0;
@@ -123,7 +123,7 @@ const categoryStore = useCategoryStore()
               padding: 10px;
 
               &:hover {
-                background: #e3f9f4;
+                background: $brandTint;
               }
 
               img {

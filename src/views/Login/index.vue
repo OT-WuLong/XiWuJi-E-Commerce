@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import 'element-plus/theme-chalk/el-message.css'
 import { useUserStore } from '@/stores/userStore';
+import BrandLogo from '@/components/BrandLogo.vue';
 
 const router = useRouter()
 const route = useRoute()
@@ -55,7 +56,7 @@ const doLogin = async () => {
     <header class="login-header">
       <div class="container m-top-20">
         <h1 class="logo">
-          <RouterLink to="/">小兔鲜</RouterLink>
+          <BrandLogo />
         </h1>
         <RouterLink class="entry" to="/">
           进入网站首页
@@ -65,6 +66,11 @@ const doLogin = async () => {
       </div>
     </header>
     <section class="login-section">
+      <div class="login-story">
+        <span>CURATED FOR EVERYDAY</span>
+        <h2>让日常所用<br>都成为心头好</h2>
+        <p>从居家到美食，挑选值得慢慢喜欢的好物。</p>
+      </div>
       <div class="wrapper">
         <nav>
           <span>账户登录</span>
@@ -87,7 +93,7 @@ const doLogin = async () => {
 
     <footer class="login-footer">
       <div class="container">
-        <p>小兔鲜儿前端练习项目，仅供学习交流</p>
+        <p>栖物集前端练习项目，仅供学习交流</p>
         <p>商品与订单数据来自测试接口</p>
       </div>
     </footer>
@@ -107,14 +113,6 @@ const doLogin = async () => {
 
   .logo {
     width: 200px;
-
-    a {
-      display: block;
-      height: 132px;
-      width: 100%;
-      text-indent: -9999px;
-      background: url("@/assets/images/logo.webp") no-repeat center 18px / contain;
-    }
   }
 
   .sub {
@@ -133,16 +131,45 @@ const doLogin = async () => {
 
     i {
       font-size: 14px;
-      color: $xtxColor;
+      color: $brandPrimary;
       letter-spacing: -5px;
     }
   }
 }
 
 .login-section {
-  background: url("@/assets/images/login-bg.webp") no-repeat center / cover;
+  background:
+    radial-gradient(circle at 23% 22%, rgba(255, 255, 255, 0.1) 0 12%, transparent 12.5%),
+    radial-gradient(circle at 42% 92%, rgba(255, 255, 255, 0.07) 0 19%, transparent 19.5%),
+    linear-gradient(110deg, $navDark, $brandPrimary 68%, #677b92);
   height: 488px;
   position: relative;
+
+  .login-story {
+    position: absolute;
+    top: 100px;
+    left: calc(50% - 600px);
+    color: #fff;
+
+    span {
+      font-size: 13px;
+      letter-spacing: 0.24em;
+      color: #f3c2a8;
+    }
+
+    h2 {
+      margin: 20px 0;
+      font-size: 42px;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: 0.08em;
+    }
+
+    p {
+      font-size: 16px;
+      color: #dbe3ed;
+    }
+  }
 
   .wrapper {
     width: 380px;
@@ -193,7 +220,7 @@ const doLogin = async () => {
     text-align: right;
 
     a {
-      color: $xtxColor;
+      color: $brandPrimary;
 
       i {
         font-size: 14px;
@@ -237,7 +264,7 @@ const doLogin = async () => {
 
           &.active,
           &:focus {
-            border-color: $xtxColor;
+            border-color: $brandPrimary;
           }
         }
 
@@ -282,7 +309,7 @@ const doLogin = async () => {
       color: #fff;
       text-align: center;
       line-height: 40px;
-      background: $xtxColor;
+      background: $brandPrimary;
 
       &.disabled {
         background: #cfcdcd;
@@ -306,7 +333,7 @@ const doLogin = async () => {
 }
 
 .subBtn {
-  background: $xtxColor;
+  background: $brandPrimary;
   width: 100%;
   color: #fff;
 }

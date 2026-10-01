@@ -16,6 +16,6 @@
 }
 
 .back-home {
-  color: $xtxColor;
+  color: $brandPrimary;
 }
 </style>

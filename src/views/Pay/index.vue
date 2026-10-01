@@ -102,7 +102,7 @@ const payUrl = computed(() => {
 
   .icon {
     font-size: 80px;
-    color: #1dc779;
+    color: $successColor;
   }
 
   .tip {
@@ -165,7 +165,7 @@ const payUrl = computed(() => {
 
     &.active,
     &:hover {
-      border-color: $xtxColor;
+      border-color: $brandPrimary;
     }
 
     &.alipay {

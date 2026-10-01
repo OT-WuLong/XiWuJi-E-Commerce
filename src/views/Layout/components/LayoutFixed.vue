@@ -3,6 +3,7 @@ import { useScroll } from '@vueuse/core';
 const { y } = useScroll(window);
 
 import { useCategoryStore } from '@/stores/categoryStore';
+import BrandLogo from '@/components/BrandLogo.vue';
 const categoryStore = useCategoryStore();
 
 </script>
@@ -10,7 +11,7 @@ const categoryStore = useCategoryStore();
 <template>
   <div class="app-header-sticky" :class="{ show: y > 78 }">
     <div class="container">
-      <RouterLink class="logo" to="/" />
+      <BrandLogo compact />
       <!-- 导航区域 -->
       <ul class="app-header-nav ">
         <li class="home" v-for="item in categoryStore.catagoryList" :key="item.id">
@@ -49,13 +50,6 @@ const categoryStore = useCategoryStore();
     align-items: center;
   }
 
-  .logo {
-    width: 200px;
-    height: 80px;
-    background: url("@/assets/images/logo.webp") no-repeat right 2px;
-    background-size: 160px auto;
-  }
-
 }
 
 .app-header-nav {
@@ -77,14 +71,14 @@ const categoryStore = useCategoryStore();
       display: inline-block;
 
       &:hover {
-        color: $xtxColor;
-        border-bottom: 1px solid $xtxColor;
+        color: $brandPrimary;
+        border-bottom: 1px solid $brandPrimary;
       }
     }
 
     .active {
-      color: $xtxColor;
-      border-bottom: 1px solid $xtxColor;
+      color: $brandPrimary;
+      border-bottom: 1px solid $brandPrimary;
     }
   }
 }

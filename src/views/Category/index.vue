@@ -1,9 +1,7 @@
 <script setup>
 import GoodsItem from '@/views/Home/components/GoodsItem.vue'
-import { useBanner } from '@/views/Category/composables/useBanner'
 import { useCategory } from '@/views/Category/composables/useCategory'
 
-const { bannerList } = useBanner()
 const { categoryData, loading, loadError, retry } = useCategory()
 </script>
 
@@ -24,14 +22,20 @@ const { categoryData, loading, loadError, retry } = useCategory()
           <el-breadcrumb-item>{{ categoryData.name }}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
-      <!-- 轮播图 -->
-      <div class="home-banner" v-if="bannerList.length">
-        <el-carousel height="500px">
-          <el-carousel-item v-for="item in bannerList" :key="item.id">
-            <img :src="item.imgUrl" alt="" />
-          </el-carousel-item>
-        </el-carousel>
-      </div>
+      <section class="category-intro" :aria-label="`${categoryData.name}精选分类`">
+        <div class="intro-copy">
+          <span>QIWU MARKET / COLLECTION</span>
+          <h2>{{ categoryData.name }}好物</h2>
+          <p>从日常里发现值得喜欢的选择。</p>
+        </div>
+        <div class="intro-cards">
+          <RouterLink v-for="item in categoryData.children.slice(0, 3)" :key="item.id" :to="`/category/sub/${item.id}`">
+            <img :src="item.picture" alt="" />
+            <strong>{{ item.name }}</strong>
+            <span aria-hidden="true">↗</span>
+          </RouterLink>
+        </div>
+      </section>
       <!-- 分类 -->
       <div class="sub-list">
         <h3>全部分类</h3>
@@ -105,7 +109,7 @@ const { categoryData, loading, loadError, retry } = useCategory()
           }
 
           &:hover {
-            color: $xtxColor;
+            color: $brandPrimary;
           }
         }
       }
@@ -144,25 +148,84 @@ const { categoryData, loading, loadError, retry } = useCategory()
     padding: 25px 0;
   }
 
-  .home-banner {
-    width: 1240px;
-    height: 500px;
+}
 
-    img {
-      width: 100%;
-      height: 500px;
+.category-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 300px;
+  padding: 38px 54px;
+  background:
+    radial-gradient(circle at 88% 18%, #e6d8cd 0 12%, transparent 12.2%),
+    linear-gradient(105deg, #e9eef5, #f7f4ef);
+
+  .intro-copy {
+    span {
+      color: $brandAccent;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+    }
+
+    h2 {
+      margin: 16px 0 12px;
+      color: $navDark;
+      font-size: 42px;
+      font-weight: 700;
+    }
+
+    p {
+      color: #617083;
+      font-size: 16px;
     }
   }
-}
-.home-banner {
-  width: 1240px;
-  height: 500px;
-  margin: 0 auto;
-  z-index: 98;
 
-  img {
-    width: 100%;
-    height: 500px;
+  .intro-cards {
+    display: flex;
+    gap: 14px;
+
+    a {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 174px;
+      height: 208px;
+      padding: 18px 10px;
+      border: 1px solid #e1e4e7;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(29, 44, 65, 0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+
+      &:hover,
+      &:focus-visible {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 28px rgba(29, 44, 65, 0.12);
+      }
+
+      img {
+        width: 125px;
+        height: 125px;
+        object-fit: contain;
+      }
+
+      strong {
+        margin-top: 9px;
+        color: $navDark;
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      span {
+        position: absolute;
+        right: 13px;
+        bottom: 10px;
+        color: $brandAccent;
+        font-size: 18px;
+      }
+    }
   }
 }
 </style>

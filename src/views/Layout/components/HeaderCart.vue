@@ -67,7 +67,7 @@ const cartStore = useCartStore()
       top: 0;
       padding: 1px 6px;
       line-height: 1;
-      background: $helpColor;
+      background: $brandAccent;
       color: #fff;
       font-size: 12px;
       border-radius: 10px;
@@ -187,7 +187,7 @@ const cartStore = useCartStore()
 
         &:hover,
         &:focus-visible {
-          color: $xtxColor;
+          color: $brandPrimary;
         }
       }
 

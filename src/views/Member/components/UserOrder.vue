@@ -262,7 +262,7 @@ const formatPayState = (payState) => stateMap[payState] ?? '未知状态'
         width: 120px;
 
         .green {
-          color: $xtxColor;
+          color: $brandPrimary;
         }
       }
 
@@ -281,7 +281,7 @@ const formatPayState = (payState) => stateMap[payState] ?? '未知状态'
           display: block;
 
           &:hover {
-            color: $xtxColor;
+            color: $brandPrimary;
           }
         }
       }

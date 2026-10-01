@@ -1,15 +1,5 @@
 import httpInstance from '@/utils/http'
 
-export function getBannerAPI(prams = {}) {
-  const {distributionSite = '1'} = prams
-  return httpInstance({
-    url: '/home/banner',
-    params: {
-      distributionSite
-    }
-  })
-}
-
 /**
  * @description: 获取新鲜好物
  * @param {*}

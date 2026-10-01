@@ -5,20 +5,20 @@
         <div class="slogan">
           <div>
             <i class="iconfont icon-footer01"></i>
-            <span>价格亲民</span>
+            <span>精选好物</span>
           </div>
           <div>
             <i class="iconfont icon-footer02"></i>
-            <span>物流快捷</span>
+            <span>轻松选购</span>
           </div>
           <div>
             <i class="iconfont icon-footer03"></i>
-            <span>品质新鲜</span>
+            <span>用心生活</span>
           </div>
         </div>
         <!-- 版权信息 -->
         <div class="copyright">
-          <p>小兔鲜儿前端练习项目，仅供学习交流</p>
+          <p>栖物集前端练习项目，仅供学习交流</p>
           <p>商品与订单数据来自测试接口</p>
         </div>
       </div>
@@ -29,18 +29,18 @@
 <style scoped lang='scss'>
 .app_footer {
   overflow: hidden;
-  background-color: #f5f5f5;
+  background-color: $pageCanvas;
   padding-top: 0;
 
   .extra {
-    background-color: #333;
+    background-color: $navDark;
   }
 
   .slogan {
     height: 178px;
     line-height: 58px;
     padding: 60px 100px;
-    border-bottom: 1px solid #434343;
+    border-bottom: 1px solid #45566c;
     display: flex;
     justify-content: space-between;
 
@@ -59,7 +59,7 @@
 
       span {
         vertical-align: middle;
-        text-shadow: 0 0 1px #333;
+        text-shadow: 0 0 1px $navDark;
       }
     }
   }

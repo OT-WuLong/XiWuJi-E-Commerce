@@ -184,7 +184,7 @@ const checkOut = () => {
     text-align: center;
 
     .delete-link {
-      color: $xtxColor;
+      color: $brandPrimary;
       background: none;
       border: 0;
       cursor: pointer;
@@ -206,7 +206,7 @@ const checkOut = () => {
   }
 
   .green {
-    color: $xtxColor;
+    color: $brandPrimary;
   }
 
   .f16 {

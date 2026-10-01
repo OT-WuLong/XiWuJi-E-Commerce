@@ -152,7 +152,7 @@ export default {
   cursor: pointer;
 
   &.selected {
-    border-color: $xtxColor;
+    border-color: $brandPrimary;
   }
 
   &:disabled {
@@ -199,7 +199,7 @@ export default {
         }
 
         &:focus-visible {
-          outline: 2px solid $xtxColor;
+          outline: 2px solid $brandPrimary;
           outline-offset: 2px;
         }
 
