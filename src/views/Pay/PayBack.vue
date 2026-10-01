@@ -1,16 +1,43 @@
 <script setup>
 import { getOrderAPI } from '@/apis/pay'
-import { onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { isPaidOrderState } from '@/utils/order'
+import { formatMoney } from '@/utils/money'
+
 const route = useRoute()
-const orderInfo = ref({})
+const orderInfo = ref(null)
+const loading = ref(true)
+let requestId = 0
 
-const getOrderInfo = async () => {
-  const res = await getOrderAPI(route.query.orderId)
-  orderInfo.value = res.result
+const getOrderInfo = async (id) => {
+  const currentRequest = ++requestId
+  orderInfo.value = null
+  loading.value = true
+  if (typeof id !== 'string' || !id) {
+    loading.value = false
+    return
+  }
+  try {
+    const res = await getOrderAPI(id)
+    if (currentRequest === requestId) orderInfo.value = res.result
+  } catch {
+    // 请求错误已由 HTTP 拦截器提示
+  } finally {
+    if (currentRequest === requestId) loading.value = false
+  }
 }
+watch(() => route.query.orderId, getOrderInfo, { immediate: true })
 
-onMounted(() => getOrderInfo())
+const paid = computed(() => isPaidOrderState(orderInfo.value?.orderState))
+const resultText = computed(() => {
+  if (loading.value) return '正在核对支付结果'
+  if (!orderInfo.value) return '暂时无法确认支付结果'
+  if (paid.value) return '支付成功'
+  if (orderInfo.value.orderState === 1) return '订单待付款'
+  if (orderInfo.value.orderState === 6) return '订单已取消'
+  return '订单状态未知'
+})
 
 </script>
 
@@ -20,21 +47,17 @@ onMounted(() => getOrderInfo())
     <div class="container">
       <!-- 支付结果 -->
       <div class="pay-result">
-        <!-- 路由参数获取到的是字符串而不是布尔值 -->
-        <span class="iconfont icon-queren2 green" v-if="$route.query.payResult === 'true'"></span>
-        <span class="iconfont icon-shanchu red" v-else></span>
-        <p class="tit">支付{{ $route.query.payResult === 'true' ? '成功' : '失败' }}</p>
-        <p class="tip">我们将尽快为您发货，收货期间请保持手机畅通</p>
-        <p>支付方式：<span>支付宝</span></p>
-        <p>支付金额：<span>¥{{ orderInfo.payMoney?.toFixed(2) }}</span></p>
+        <span class="iconfont icon-queren2 green" v-if="paid"></span>
+        <span class="iconfont icon-shanchu red" v-else-if="orderInfo?.orderState === 6"></span>
+        <span class="iconfont icon-tip muted" v-else-if="!loading"></span>
+        <p class="tit">{{ resultText }}</p>
+        <p class="tip" v-if="paid">订单支付状态已确认，请到订单页查看最新进度</p>
+        <p v-if="orderInfo">订单金额：<span>¥{{ formatMoney(orderInfo.payMoney) }}</span></p>
         <div class="btn">
-          <el-button type="primary" style="margin-right:20px">查看订单</el-button>
-          <el-button>进入首页</el-button>
+          <el-button type="primary" style="margin-right:20px" @click="$router.push('/member/order')">查看订单</el-button>
+          <el-button @click="$router.push('/')">进入首页</el-button>
+          <el-button v-if="!loading && !paid && route.query.orderId" @click="getOrderInfo(route.query.orderId)">刷新支付状态</el-button>
         </div>
-        <p class="alert">
-          <span class="iconfont icon-tip"></span>
-          温馨提示：小兔鲜儿不会以订单异常、系统升级为由要求您点击任何网址链接进行退款操作，保护资产、谨慎操作。
-        </p>
       </div>
     </div>
   </div>
@@ -59,6 +82,10 @@ onMounted(() => getOrderInfo())
     color: $priceColor;
   }
 
+  .muted {
+    color: #999;
+  }
+
   .tit {
     font-size: 24px;
   }
@@ -76,10 +103,5 @@ onMounted(() => getOrderInfo())
     margin-top: 50px;
   }
 
-  .alert {
-    font-size: 12px;
-    color: #999;
-    margin-top: 50px;
-  }
 }
 </style>

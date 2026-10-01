@@ -5,8 +5,10 @@ import router from '@/router';
 
 import { useUserStore } from '@/stores/userStore';
 
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+
 const httpInstance = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   timeout: 20000
 })
 
@@ -24,10 +26,10 @@ httpInstance.interceptors.response.use(res => res.data, e => {
   const userStore = useUserStore()
   ElMessage({
     type: 'warning',
-    message: e.response.data.message
+    message: e.response?.data?.message || (e.code === 'ECONNABORTED' ? '请求超时，请稍后重试' : '网络异常，请稍后重试')
   })
 
-  if (e.response.status === 401) {
+  if (e.response?.status === 401 && userStore.userInfo.token && e.config?.url !== '/login') {
     userStore.clearuserInfo()
     router.replace('/login')
   }

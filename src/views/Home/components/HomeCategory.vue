@@ -6,14 +6,14 @@ const categoryStore = useCategoryStore()
 
 <template>
   <div class="home-category">
-    <ul class="menu">
+    <ul class="menu" v-if="categoryStore.catagoryList.length">
       <li v-for="item in categoryStore.catagoryList" :key="item.id">
         <RouterLink :to="`/category/${item.id}`">{{ item.name }}</RouterLink>
         <RouterLink v-for="i in item.children.slice(0, 2)" :key="i.id" :to="`/category/sub/${i.id}`"> {{ i.name }}
         </RouterLink>
         <!-- 弹层layer位置 -->
         <div class="layer">
-          <h4>分类推荐 <small>根据您的购买或浏览记录推荐</small></h4>
+          <h4>分类推荐 <small>精选商品</small></h4>
           <ul>
             <li v-for="i in item.goods" :key="i.id">
               <RouterLink :to="`/detail/${i.id}`">
@@ -31,6 +31,11 @@ const categoryStore = useCategoryStore()
         </div>
       </li>
     </ul>
+    <div class="menu-state" v-else :role="categoryStore.error ? 'alert' : 'status'">
+      <span v-if="categoryStore.loading">分类加载中...</span>
+      <template v-else-if="categoryStore.error">分类加载失败 <el-button @click="categoryStore.getCategory">重试</el-button></template>
+      <span v-else>暂无分类</span>
+    </div>
   </div>
 </template>
 
@@ -42,6 +47,16 @@ const categoryStore = useCategoryStore()
   background: rgba(0, 0, 0, 0.8);
   position: relative;
   z-index: 99;
+
+  .menu-state {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    color: #fff;
+  }
 
   .menu {
     li {
@@ -145,7 +160,8 @@ const categoryStore = useCategoryStore()
       }
 
       // 关键样式  hover状态下的layer盒子变成block
-      &:hover {
+      &:hover,
+      &:focus-within {
         .layer {
           display: block;
         }

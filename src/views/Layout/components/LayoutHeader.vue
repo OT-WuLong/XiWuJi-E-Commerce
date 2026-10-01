@@ -18,8 +18,8 @@ const categoryStore = useCategoryStore();
         </li>
       </ul>
       <div class="search">
-        <i class="iconfont icon-search"></i>
-        <input type="text" placeholder="搜一搜">
+        <i class="iconfont icon-search" aria-hidden="true"></i>
+        <input type="text" placeholder="搜索暂未开放" aria-label="搜索暂未开放" disabled>
       </div>
       <!-- 头部购物车 -->
       <HeaderCart></HeaderCart>
@@ -45,7 +45,7 @@ const categoryStore = useCategoryStore();
       height: 132px;
       width: 100%;
       text-indent: -9999px;
-      background: url('@/assets/images/logo.png') no-repeat center 18px / contain;
+      background: url('@/assets/images/logo.webp') no-repeat center 18px / contain;
     }
   }
 
@@ -96,6 +96,11 @@ const categoryStore = useCategoryStore();
       width: 140px;
       padding-left: 5px;
       color: #666;
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
     }
   }
 

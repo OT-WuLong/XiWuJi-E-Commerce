@@ -1,19 +1,19 @@
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import { ElMessage } from 'element-plus';
 import 'element-plus/theme-chalk/el-message.css'
 import { useUserStore } from '@/stores/userStore';
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 
 
 const form = ref({
   account: '',
-  password: '',
-  agree: false
+  password: ''
 })
 
 const rules = {
@@ -23,29 +23,30 @@ const rules = {
   password: [
     { required: true, message: '密码不能为空', trigger: 'blur' },
     { min: 6, max: 14, message: '密码长度应为6-14个字符', trigger: 'blur' }
-  ],
-  agree: [
-    {
-      validator: (rule, value, callback) => {
-        if (value) { callback() }
-        else { callback(new Error('请勾选协议')) }
-      }
-    }
   ]
 }
 
 const formRef = ref(null)
-const doLogin = () => {
+const loggingIn = ref(false)
+const doLogin = async () => {
+  if (loggingIn.value) return
+  const valid = await formRef.value.validate().catch(() => false)
+  if (!valid) return
   const { account, password } = form.value
-
-  formRef.value.validate(async (valid) => {
-    if (valid) {
-
-      await userStore.getUserInfo({ account, password })
-      ElMessage({ type: 'success', message: '登录成功' })
-      router.replace({ path: '/' })
-    }
-  })
+  loggingIn.value = true
+  try {
+    const cartSynced = await userStore.getUserInfo({ account, password })
+    ElMessage({
+      type: cartSynced ? 'success' : 'warning',
+      message: cartSynced ? '登录成功' : '登录成功，购物车同步失败，请在购物车页重试'
+    })
+    const redirect = route.query.redirect
+    await router.replace(typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//') ? redirect : '/')
+  } catch {
+    // 请求错误已由 HTTP 拦截器提示
+  } finally {
+    loggingIn.value = false
+  }
 }
 </script>
 
@@ -66,23 +67,18 @@ const doLogin = () => {
     <section class="login-section">
       <div class="wrapper">
         <nav>
-          <a href="javascript:;">账户登录</a>
+          <span>账户登录</span>
         </nav>
         <div class="account-box">
           <div class="form">
-            <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="60px" status-icon>
+            <el-form ref="formRef" :model="form" :rules="rules" label-position="right" label-width="60px" status-icon @submit.prevent="doLogin">
               <el-form-item prop="account" label="账户">
                 <el-input v-model="form.account" />
               </el-form-item>
               <el-form-item prop="password" label="密码">
-                <el-input v-model="form.password" />
+                <el-input v-model="form.password" type="password" show-password />
               </el-form-item>
-              <el-form-item prop="agree" label-width="22px">
-                <el-checkbox size="large" v-model="form.agree">
-                  我已同意隐私条款和服务条款
-                </el-checkbox>
-              </el-form-item>
-              <el-button size="large" class="subBtn" @click="doLogin">点击登录</el-button>
+              <el-button size="large" class="subBtn" native-type="submit" :loading="loggingIn">点击登录</el-button>
             </el-form>
           </div>
         </div>
@@ -91,16 +87,8 @@ const doLogin = () => {
 
     <footer class="login-footer">
       <div class="container">
-        <p>
-          <a href="javascript:;">关于我们</a>
-          <a href="javascript:;">帮助中心</a>
-          <a href="javascript:;">售后服务</a>
-          <a href="javascript:;">配送与验收</a>
-          <a href="javascript:;">商务合作</a>
-          <a href="javascript:;">搜索推荐</a>
-          <a href="javascript:;">友情链接</a>
-        </p>
-        <p>CopyRight &copy; 小兔鲜儿</p>
+        <p>小兔鲜儿前端练习项目，仅供学习交流</p>
+        <p>商品与订单数据来自测试接口</p>
       </div>
     </footer>
   </div>
@@ -125,7 +113,7 @@ const doLogin = () => {
       height: 132px;
       width: 100%;
       text-indent: -9999px;
-      background: url("@/assets/images/logo.png") no-repeat center 18px / contain;
+      background: url("@/assets/images/logo.webp") no-repeat center 18px / contain;
     }
   }
 
@@ -152,7 +140,7 @@ const doLogin = () => {
 }
 
 .login-section {
-  background: url("@/assets/images/login-bg.png") no-repeat center / cover;
+  background: url("@/assets/images/login-bg.webp") no-repeat center / cover;
   height: 488px;
   position: relative;
 
@@ -175,7 +163,7 @@ const doLogin = () => {
       text-align: right;
       align-items: center;
 
-      a {
+      span {
         flex: 1;
         line-height: 1;
         display: inline-block;
@@ -196,16 +184,6 @@ const doLogin = () => {
     color: #999;
     padding-top: 20px;
 
-    a {
-      line-height: 1;
-      padding: 0 10px;
-      color: #999;
-      display: inline-block;
-
-      ~a {
-        border-left: 1px solid #ccc;
-      }
-    }
   }
 }
 

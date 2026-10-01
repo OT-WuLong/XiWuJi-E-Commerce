@@ -1,14 +1,10 @@
 <script setup>
-import { onMounted, ref } from "vue"
+import { onMounted } from 'vue'
 import HomePanel from "./HomePanel.vue"
 import { getNewAPI } from "@/apis/home"
+import { useApiData } from '@/composables/useApiData'
 
-const newList = ref([])
-
-const getNew = async () => {
-  const res = await getNewAPI()
-  newList.value = res.result
-}
+const { data: newList, loading, error, load: getNew } = useApiData(getNewAPI)
 
 onMounted(() => { getNew() })
 
@@ -16,7 +12,7 @@ onMounted(() => { getNew() })
 
 <template>
   <HomePanel title="新鲜好物" sub-title="新鲜出炉 品质保障">
-      <ul class="goods-list">
+      <ul class="goods-list" v-if="newList.length">
         <li v-for="item in newList" :key="item.id">
           <RouterLink :to="`/detail/${item.id}`">
             <img :src="item.picture" alt="" />
@@ -25,11 +21,24 @@ onMounted(() => { getNew() })
           </RouterLink>
         </li>
       </ul>
+      <div class="goods-state" v-else :role="error ? 'alert' : 'status'">
+        <span v-if="loading">好物加载中...</span>
+        <template v-else-if="error">好物加载失败 <el-button @click="getNew">重试</el-button></template>
+        <span v-else>暂无好物推荐</span>
+      </div>
   </HomePanel>
 </template>
 
 
 <style scoped lang='scss'>
+.goods-state {
+  height: 406px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
 .goods-list {
   display: flex;
   justify-content: space-between;

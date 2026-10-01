@@ -17,10 +17,6 @@ const categoryStore = useCategoryStore();
           <RouterLink :to="`/category/${item.id}`">{{ item.name }}</RouterLink>
         </li>
       </ul>
-      <div class="right">
-        <RouterLink to="/">品牌</RouterLink>
-        <RouterLink to="/">专题</RouterLink>
-      </div>
     </div>
   </div>
 </template>
@@ -56,28 +52,10 @@ const categoryStore = useCategoryStore();
   .logo {
     width: 200px;
     height: 80px;
-    background: url("@/assets/images/logo.png") no-repeat right 2px;
+    background: url("@/assets/images/logo.webp") no-repeat right 2px;
     background-size: 160px auto;
   }
 
-  .right {
-    width: 220px;
-    display: flex;
-    text-align: center;
-    padding-left: 40px;
-    border-left: 2px solid $xtxColor;
-
-    a {
-      width: 38px;
-      margin-right: 40px;
-      font-size: 16px;
-      line-height: 1;
-
-      &:hover {
-        color: $xtxColor;
-      }
-    }
-  }
 }
 
 .app-header-nav {

@@ -26,7 +26,7 @@ export function getCategoryFilterAPI(id) {
 
 export const getSubCategoryAPI = (data = {}) => {
   return httpInstance({
-    url: '/category/goods/temporary',
+    url: '/category/goods',
     method: 'POST',
     data
   })

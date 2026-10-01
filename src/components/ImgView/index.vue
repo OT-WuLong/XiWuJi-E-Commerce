@@ -1,6 +1,6 @@
 <script setup>
 // 图片列表
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { useMouseInElement } from '@vueuse/core'
 
 defineProps({
@@ -9,14 +9,6 @@ defineProps({
     default: () => []
   }
 })
-
-// const imageList = [
-//   "https://yanxuan-item.nosdn.127.net/d917c92e663c5ed0bb577c7ded73e4ec.png",
-//   "https://yanxuan-item.nosdn.127.net/e801b9572f0b0c02a52952b01adab967.jpg",
-//   "https://yanxuan-item.nosdn.127.net/b52c447ad472d51adbdde1a83f550ac2.jpg",
-//   "https://yanxuan-item.nosdn.127.net/f93243224dc37674dfca5874fe089c60.jpg",
-//   "https://yanxuan-item.nosdn.127.net/f881cfe7de9a576aaeea6ee0d1d24823.jpg"
-// ]
 
 const activeIndex = ref(0)
 const enterhandler = (i) => {
@@ -32,16 +24,8 @@ const { elementX, elementY, isOutside } = useMouseInElement(target)
 watch([elementX, elementY], () => {
   if(isOutside.value) return
 
-  if (elementX.value > 100 && elementX.value < 300) {
-    left.value = elementX.value - 100
-  }
-  if (elementY.value > 100 && elementY.value < 300) {
-    top.value = elementY.value - 100
-  }
-  if (elementX < 100) { left.value = 0 }
-  if (elementX > 300) { left.value = 200 }
-  if (elementY < 100) { top.value = 0 }
-  if (elementY > 300) { top.value = 200 }
+  left.value = Math.min(200, Math.max(0, elementX.value - 100))
+  top.value = Math.min(200, Math.max(0, elementY.value - 100))
 
   positionX.value = -left.value * 2
   positionY.value = -top.value * 2
@@ -63,8 +47,11 @@ watch([elementX, elementY], () => {
     </div>
     <!-- 小图列表 -->
     <ul class="small">
-      <li v-for="(img, i) in imageList" :key="i" @mouseenter="enterhandler(i)" :class="{ active: activeIndex === i }">
-        <img :src="img" alt="" />
+      <li v-for="(img, i) in imageList" :key="i" :class="{ active: activeIndex === i }">
+        <button type="button" :aria-label="`查看第${i + 1}张商品图片`" :aria-pressed="activeIndex === i"
+          @mouseenter="enterhandler(i)" @focus="enterhandler(i)" @click="enterhandler(i)">
+          <img :src="img" alt="" />
+        </button>
       </li>
     </ul>
     <!-- 放大镜大图 -->
@@ -128,6 +115,26 @@ watch([elementX, elementY], () => {
       &:hover,
       &.active {
         border: 2px solid $xtxColor;
+      }
+
+      button {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        border: 0;
+        background: none;
+        cursor: pointer;
+
+        &:focus-visible {
+          outline: 2px solid $xtxColor;
+          outline-offset: 2px;
+        }
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
       }
     }
   }

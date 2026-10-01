@@ -1,15 +1,11 @@
 <script setup>
 import { getLikeListAPI } from '@/apis/user'
 import { useUserStore } from '@/stores/userStore'
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import GoodsItem from '@/views/Home/components/GoodsItem.vue'
+import { useApiData } from '@/composables/useApiData'
 const userStore = useUserStore()
-const likeList = ref([])
-
-const getLikeList = async () => {
-  const res = await getLikeListAPI({ limit: 4 })
-  likeList.value = res.result
-}
+const { data: likeList, loading, error, load: getLikeList } = useApiData(() => getLikeListAPI({ limit: 4 }))
 onMounted(() => getLikeList())
 
 </script>
@@ -19,32 +15,33 @@ onMounted(() => getLikeList())
     <!-- 用户信息 -->
     <div class="user-meta">
       <div class="avatar">
-        <img :src="userStore.userInfo?.avatar" />
+        <img :src="userStore.userInfo?.avatar" alt="" />
       </div>
       <h4>{{ userStore.userInfo?.account }}</h4>
     </div>
     <div class="item">
-      <a href="javascript:;">
+      <RouterLink to="/member/order">
         <span class="iconfont icon-hy"></span>
-        <p>会员中心</p>
-      </a>
-      <a href="javascript:;">
-        <span class="iconfont icon-aq"></span>
-        <p>安全设置</p>
-      </a>
-      <a href="javascript:;">
-        <span class="iconfont icon-dw"></span>
-        <p>地址管理</p>
-      </a>
+        <p>我的订单</p>
+      </RouterLink>
+      <RouterLink to="/cartlist">
+        <span class="iconfont icon-cart"></span>
+        <p>我的购物车</p>
+      </RouterLink>
     </div>
   </div>
   <div class="like-container">
     <div class="home-panel">
       <div class="header">
-        <h4 data-v-bcb266e0="">猜你喜欢</h4>
+        <h4>猜你喜欢</h4>
       </div>
-      <div class="goods-list">
+      <div class="goods-list" v-if="likeList.length">
         <GoodsItem v-for="good in likeList" :key="good.id" :goods="good" />
+      </div>
+      <div class="like-state" v-else :role="error ? 'alert' : 'status'">
+        <span v-if="loading">推荐加载中...</span>
+        <template v-else-if="error">推荐加载失败 <el-button @click="getLikeList">重试</el-button></template>
+        <span v-else>暂无推荐商品</span>
       </div>
     </div>
   </div>
@@ -53,7 +50,7 @@ onMounted(() => getLikeList())
 <style scoped lang="scss">
 .home-overview {
   height: 132px;
-  background: url(@/assets/images/center-bg.png) no-repeat center / cover;
+  background: url(@/assets/images/center-bg.webp) no-repeat center / cover;
   display: flex;
 
   .user-meta {
@@ -138,6 +135,14 @@ onMounted(() => getLikeList())
   .goods-list {
     display: flex;
     justify-content: space-around;
+  }
+
+  .like-state {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
   }
 }
 </style>

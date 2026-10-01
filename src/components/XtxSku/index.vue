@@ -3,13 +3,13 @@
     <dl v-for="item in goods.specs" :key="item.id">
       <dt>{{ item.name }}</dt>
       <dd>
-        <template v-for="val in item.values" :key="val.name">
-          <img :class="{ selected: val.selected, disabled: val.disabled }" @click="clickSpecs(item, val)"
-            v-if="val.picture" :src="val.picture" />
-          <span :class="{ selected: val.selected, disabled: val.disabled }" @click="clickSpecs(item, val)" v-else>{{
-              val.name
-          }}</span>
-        </template>
+        <button v-for="val in item.values" :key="val.name" type="button"
+          :class="{ selected: val.selected, picture: !!val.picture }"
+          :disabled="val.disabled" :aria-pressed="!!val.selected"
+          :aria-label="val.picture ? val.name : undefined" @click="clickSpecs(item, val)">
+          <img v-if="val.picture" :src="val.picture" alt="" />
+          <span v-else>{{ val.name }}</span>
+        </button>
       </dd>
     </dl>
   </div>
@@ -155,7 +155,7 @@ export default {
     border-color: $xtxColor;
   }
 
-  &.disabled {
+  &:disabled {
     opacity: 0.6;
     border-style: dashed;
     cursor: not-allowed;
@@ -180,20 +180,34 @@ export default {
       flex: 1;
       color: #666;
 
-      >img {
-        width: 50px;
-        height: 50px;
-        margin-bottom: 4px;
-        @include sku-state-mixin;
-      }
-
-      >span {
-        display: inline-block;
+      >button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         height: 30px;
-        line-height: 28px;
         padding: 0 20px;
         margin-bottom: 4px;
+        background: #fff;
+        color: inherit;
+        font: inherit;
         @include sku-state-mixin;
+
+        &.picture {
+          width: 50px;
+          height: 50px;
+          padding: 0;
+        }
+
+        &:focus-visible {
+          outline: 2px solid $xtxColor;
+          outline-offset: 2px;
+        }
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
       }
     }
   }

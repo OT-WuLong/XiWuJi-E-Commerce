@@ -28,6 +28,22 @@ export function delCartAPI(ids) {
   })
 }
 
+export function updateCartItemAPI(skuId, data) {
+  return httpInstance({
+    url: `/member/cart/${skuId}`,
+    method: 'PUT',
+    data
+  })
+}
+
+export function checkAllCartAPI(selected, ids) {
+  return httpInstance({
+    url: '/member/cart/selected',
+    method: 'PUT',
+    data: { selected, ids }
+  })
+}
+
 export function mergeCartAPI(data){
   return httpInstance({
     url: '/member/cart/merge',

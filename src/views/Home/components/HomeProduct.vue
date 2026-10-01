@@ -1,24 +1,26 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import { getGoodsAPI } from '@/apis/home';
 import HomePanel from './HomePanel.vue';
 import GoodsItem from './GoodsItem.vue';
+import { useApiData } from '@/composables/useApiData'
 
-const goodsProduct = ref([])
-const getGoods = async () => {
-  const res = await getGoodsAPI()
-  goodsProduct.value = res.result
-}
+const { data: goodsProduct, loading, error, load: getGoods } = useApiData(getGoodsAPI)
 
 onMounted(() => {getGoods()})
 
 </script>
 <template>
   <div class="home-product">
+    <div class="goods-state container" v-if="!goodsProduct.length" :role="error ? 'alert' : 'status'">
+      <span v-if="loading">商品加载中...</span>
+      <template v-else-if="error">商品加载失败 <el-button @click="getGoods">重试</el-button></template>
+      <span v-else>暂无分类商品</span>
+    </div>
     <HomePanel :title="cate.name" v-for="cate in goodsProduct" :key="cate.id">
       <div class="box">
-        <RouterLink class="cover" to="/">
-          <img v-img-lazy="cate.picture" />
+        <RouterLink class="cover" :to="`/category/${cate.id}`">
+          <img v-img-lazy="cate.picture" alt="" />
           <strong class="label">
             <span>{{ cate.name }}馆</span>
             <span>{{ cate.saleInfo }}</span>
@@ -35,6 +37,14 @@ onMounted(() => {getGoods()})
 </template>
 
 <style scoped lang='scss'>
+.goods-state {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
 .home-product {
   background: #fff;
   margin-top: 20px;

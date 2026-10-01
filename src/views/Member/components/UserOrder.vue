@@ -1,35 +1,56 @@
 <script setup>
 import { getUserOrder } from '@/apis/order'
 import { onMounted, ref } from 'vue'
+import { formatMoney } from '@/utils/money'
 // tab列表
 const tabTypes = [
-  { name: "all", label: "全部订单" },
-  { name: "unpay", label: "待付款" },
-  { name: "deliver", label: "待发货" },
-  { name: "receive", label: "待收货" },
-  { name: "comment", label: "待评价" },
-  { name: "complete", label: "已完成" },
-  { name: "cancel", label: "已取消" }
+  { name: '0', label: '全部订单' },
+  { name: '1', label: '待付款' },
+  { name: '2', label: '待发货' },
+  { name: '3', label: '待收货' },
+  { name: '4', label: '待评价' },
+  { name: '5', label: '已完成' },
+  { name: '6', label: '已取消' }
 ]
 // 获取订单列表
 const orderList = ref([])
 const total = ref(0)
+const loading = ref(false)
+const loadError = ref(false)
 const params = ref({
   orderState: 0,
   page: 1,
-  pageSize: 2
+  pageSize: 10
 })
+let requestId = 0
 const getOrderList = async () => {
-  const res = await getUserOrder(params.value)
-  orderList.value = res.result.items
-  total.value = res.result.counts
+  const currentRequest = ++requestId
+  loading.value = true
+  loadError.value = false
+  try {
+    const res = await getUserOrder(params.value)
+    if (currentRequest !== requestId) return
+    orderList.value = res.result.items
+    total.value = res.result.counts
+  } catch {
+    if (currentRequest === requestId) {
+      orderList.value = []
+      total.value = 0
+      loadError.value = true
+    }
+  } finally {
+    if (currentRequest === requestId) loading.value = false
+  }
 }
 
 onMounted(() => getOrderList())
 
 // tab切换
 const tabChange = (type) => {
-  params.value.orderState = type
+  params.value.orderState = Number(type)
+  params.value.page = 1
+  orderList.value = []
+  total.value = 0
   getOrderList()
 }
 
@@ -40,27 +61,31 @@ const pageChange = (page) => {
 }
 
 
-const fomartPayState = (payState) => {
-  const stateMap = {
-    1: '待付款',
-    2: '待发货',
-    3: '待收货',
-    4: '待评价',
-    5: '已完成',
-    6: '已取消'
-  }
-  return stateMap[payState]
+const stateMap = {
+  1: '待付款',
+  2: '待发货',
+  3: '待收货',
+  4: '待评价',
+  5: '已完成',
+  6: '已取消'
 }
+const formatPayState = (payState) => stateMap[payState] ?? '未知状态'
 </script>
 
 <template>
   <div class="order-container">
     <el-tabs @tab-change="tabChange">
       <!-- tab切换 -->
-      <el-tab-pane v-for="item in tabTypes" :key="item.name" :label="item.label" />
+      <el-tab-pane v-for="item in tabTypes" :key="item.name" :name="item.name" :label="item.label" />
 
       <div class="main-container">
-        <div class="holder-container" v-if="orderList.length === 0">
+        <div class="holder-container" v-if="loading">正在加载订单...</div>
+        <div class="holder-container" v-else-if="loadError">
+          <el-empty description="订单加载失败">
+            <el-button @click="getOrderList">重试</el-button>
+          </el-empty>
+        </div>
+        <div class="holder-container" v-else-if="orderList.length === 0">
           <el-empty description="暂无订单数据" />
         </div>
         <div v-else>
@@ -69,19 +94,14 @@ const fomartPayState = (payState) => {
             <div class="head">
               <span>下单时间：{{ order.createTime }}</span>
               <span>订单编号：{{ order.id }}</span>
-              <!-- 未付款，倒计时时间还有 -->
-              <span class="down-time" v-if="order.orderState === 1">
-                <i class="iconfont icon-down-time"></i>
-                <b>付款截止: {{ order.countdown }}</b>
-              </span>
             </div>
             <div class="body">
               <div class="column goods">
                 <ul>
                   <li v-for="item in order.skus" :key="item.id">
-                    <a class="image" href="javascript:;">
+                    <div class="image">
                       <img :src="item.image" alt="" />
-                    </a>
+                    </div>
                     <div class="info">
                       <p class="name ellipsis-2">
                         {{ item.name }}
@@ -90,49 +110,29 @@ const fomartPayState = (payState) => {
                         <span>{{ item.attrsText }}</span>
                       </p>
                     </div>
-                    <div class="price">¥{{ item.realPay?.toFixed(2) }}</div>
+                    <div class="price">¥{{ formatMoney(item.realPay) }}</div>
                     <div class="count">x{{ item.quantity }}</div>
                   </li>
                 </ul>
               </div>
               <div class="column state">
-                <p>{{ fomartPayState(order.orderState) }}</p>
-                <p v-if="order.orderState === 3">
-                  <a href="javascript:;" class="green">查看物流</a>
-                </p>
-                <p v-if="order.orderState === 4">
-                  <a href="javascript:;" class="green">评价商品</a>
-                </p>
-                <p v-if="order.orderState === 5">
-                  <a href="javascript:;" class="green">查看评价</a>
-                </p>
+                <p>{{ formatPayState(order.orderState) }}</p>
               </div>
               <div class="column amount">
-                <p class="red">¥{{ order.payMoney?.toFixed(2) }}</p>
-                <p>（含运费：¥{{ order.postFee?.toFixed(2) }}）</p>
+                <p class="red">¥{{ formatMoney(order.payMoney) }}</p>
+                <p>（含运费：¥{{ formatMoney(order.postFee) }}）</p>
                 <p>在线支付</p>
               </div>
               <div class="column action">
-                <el-button v-if="order.orderState === 1" type="primary" size="small">
+                <el-button v-if="order.orderState === 1" type="primary" size="small" @click="$router.push({ path: '/pay', query: { id: order.id } })">
                   立即付款
                 </el-button>
-                <el-button v-if="order.orderState === 3" type="primary" size="small">
-                  确认收货
-                </el-button>
-                <p><a href="javascript:;">查看详情</a></p>
-                <p v-if="[2, 3, 4, 5].includes(order.orderState)">
-                  <a href="javascript:;">再次购买</a>
-                </p>
-                <p v-if="[4, 5].includes(order.orderState)">
-                  <a href="javascript:;">申请售后</a>
-                </p>
-                <p v-if="order.orderState === 1"><a href="javascript:;">取消订单</a></p>
               </div>
             </div>
           </div>
           <!-- 分页 -->
-          <div class="pagination-container">
-            <el-pagination :total="total" @current-change="pageChange" :page-size="params.pageSize" background
+          <div class="pagination-container" v-if="total > params.pageSize">
+            <el-pagination :total="total" :current-page="params.page" @current-change="pageChange" :page-size="params.pageSize" background
               layout="prev, pager, next" />
           </div>
         </div>
@@ -177,20 +177,6 @@ const fomartPayState = (payState) => {
     span {
       margin-right: 20px;
 
-      &.down-time {
-        margin-right: 0;
-        float: right;
-
-        i {
-          vertical-align: middle;
-          margin-right: 3px;
-        }
-
-        b {
-          vertical-align: middle;
-          font-weight: normal;
-        }
-      }
     }
 
     .del {

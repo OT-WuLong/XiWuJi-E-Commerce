@@ -4,12 +4,19 @@ import { useBanner } from '@/views/Category/composables/useBanner'
 import { useCategory } from '@/views/Category/composables/useCategory'
 
 const { bannerList } = useBanner()
-const { categoryData } = useCategory()
+const { categoryData, loading, loadError, retry } = useCategory()
 </script>
 
 <template>
   <div class="top-category">
-    <div class="container m-top-20">
+    <div class="container m-top-20 page-state" v-if="loading" role="status">分类加载中...</div>
+    <div class="container m-top-20 page-state" v-else-if="loadError" role="alert">
+      分类加载失败 <el-button @click="retry">重试</el-button>
+    </div>
+    <div class="container m-top-20 page-state" v-else-if="!categoryData?.children?.length">
+      <el-empty description="暂无分类商品"><RouterLink to="/">返回首页</RouterLink></el-empty>
+    </div>
+    <div class="container m-top-20" v-else>
       <!-- 面包屑 -->
       <div class="bread-container">
         <el-breadcrumb separator=">">
@@ -18,7 +25,7 @@ const { categoryData } = useCategory()
         </el-breadcrumb>
       </div>
       <!-- 轮播图 -->
-      <div class="home-banner">
+      <div class="home-banner" v-if="bannerList.length">
         <el-carousel height="500px">
           <el-carousel-item v-for="item in bannerList" :key="item.id">
             <img :src="item.imgUrl" alt="" />
@@ -31,7 +38,7 @@ const { categoryData } = useCategory()
         <ul>
           <li v-for="i in categoryData.children" :key="i.id">
             <RouterLink :to="`/category/sub/${i.id}`"> <!-- 点击跳转到二级路由页面 -->
-              <img :src="i.picture" />
+              <img :src="i.picture" alt="" />
               <p>{{ i.name }}</p>
             </RouterLink>
           </li>
@@ -51,6 +58,15 @@ const { categoryData } = useCategory()
 
 
 <style scoped lang="scss">
+.page-state {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #fff;
+}
+
 .top-category {
   h3 {
     font-size: 28px;

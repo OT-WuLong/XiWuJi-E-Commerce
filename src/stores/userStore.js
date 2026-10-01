@@ -10,15 +10,24 @@ export const useUserStore = defineStore('user', () => {
   const userInfo = ref({})
   const getUserInfo = async ({ account, password }) => {
     const res = await loginAPI({ account, password })
-    userInfo.value = res.result
-    await mergeCartAPI(cartStore.cartList.map(item => {
-      return {
-        skuId: item.skuId,
-        selected: item.selected,
-        count: item.count
-      }
+    const guestCart = cartStore.cartList.map(item => ({
+      skuId: item.skuId,
+      selected: item.selected,
+      count: item.count
     }))
-    cartStore.updateNewList()
+    userInfo.value = res.result
+    try {
+      if (guestCart.length) await mergeCartAPI(guestCart)
+    } catch (error) {
+      userInfo.value = {}
+      throw error
+    }
+    try {
+      await cartStore.updateNewList()
+      return true
+    } catch {
+      return false
+    }
   }
   const clearuserInfo = () => {
     userInfo.value = {}

@@ -7,7 +7,6 @@
 </template>
 
 <script setup>
-import router from '@/router';
 import { onMounted } from 'vue';
 
 import LayoutFooter from '@/views/Layout/components/LayoutFooter.vue';
@@ -17,7 +16,5 @@ import LayoutFixed from '@/views/Layout/components/LayoutFixed.vue';
 
 import { useCategoryStore } from '@/stores/categoryStore';
 const categoryStore = useCategoryStore();
-onMounted(async () => {
-  await categoryStore.getCategory();
-});
+onMounted(() => categoryStore.getCategory());
 </script>

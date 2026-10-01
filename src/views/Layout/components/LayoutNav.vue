@@ -16,21 +16,19 @@ const confirm = () => {
     <div class="container">
       <ul>
         <template v-if="userStore.userInfo.token">
-          <li><a href="javascript:;"><i class="iconfont icon-user"></i>{{ userStore.userInfo.account }}</a></li>
+          <li><RouterLink to="/member/user"><i class="iconfont icon-user"></i>{{ userStore.userInfo.account }}</RouterLink></li>
           <li>
             <el-popconfirm @confirm="confirm" title="确认退出吗?" confirm-button-text="确认" cancel-button-text="取消">
               <template #reference>
-                <a href="javascript:;">退出登录</a>
+                <button type="button">退出登录</button>
               </template>
             </el-popconfirm>
           </li>
-          <li><a href="javascript:;">我的订单</a></li>
-          <li><a href="javascript:;">会员中心</a></li>
+          <li><RouterLink to="/member/order">我的订单</RouterLink></li>
+          <li><RouterLink to="/member/user">会员中心</RouterLink></li>
         </template>
         <template v-else>
-          <li><a href="javascript:;" @click="$router.push('/login')">请先登录</a></li>
-          <li><a href="javascript:;">帮助中心</a></li>
-          <li><a href="javascript:;">关于我们</a></li>
+          <li><RouterLink to="/login">请先登录</RouterLink></li>
         </template>
       </ul>
     </div>
@@ -49,11 +47,16 @@ const confirm = () => {
     align-items: center;
 
     li {
-      a {
+      a,
+      button {
         padding: 0 15px;
         color: #cdcdcd;
         line-height: 1;
         display: inline-block;
+        background: none;
+        border: 0;
+        font: inherit;
+        cursor: pointer;
 
         i {
           font-size: 14px;
@@ -66,7 +69,8 @@ const confirm = () => {
       }
 
       ~li {
-        a {
+        a,
+        button {
           border-left: 2px solid #666;
         }
       }
